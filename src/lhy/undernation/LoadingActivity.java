@@ -14,7 +14,6 @@ public class LoadingActivity extends AdlibrLoadingActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.loading);
 	}
-
 	
 	class UndernationVersionCheckTask extends VersionCheckTask{
 		private String resultString;
@@ -34,9 +33,6 @@ public class LoadingActivity extends AdlibrLoadingActivity {
 			
 			super.onPostExecute(result);
 		}
-		
-		
-		
 	}
 	
 	

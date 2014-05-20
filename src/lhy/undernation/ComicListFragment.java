@@ -73,8 +73,8 @@ public class ComicListFragment extends Fragment implements OnItemClickListener{
 		aq.id(ivHeaderCover).image("http://thumb.comic.naver.net/webtoon/186811/thumbnail/title_thumbnail_20130109160631_t125x101.jpg", options);
 
 		// ListAdapter
-		mListAdapter = new ListAdapter(mContext, R.layout.comiclist_listview_item, mDataPostList);
-		lvList.setAdapter(mListAdapter);
+//		mListAdapter = new ListAdapter(mContext, R.layout.comiclist_listview_item, mDataPostList);
+//		lvList.setAdapter(mListAdapter);
 
 
 

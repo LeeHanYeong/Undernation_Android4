@@ -52,7 +52,7 @@ public class LoadingActivity extends AdlibrLoadingActivity {
 
 		@Override
 		protected Integer doInBackground(Void... params) {
-			resultstring = getRequest(C.URL_API_VERSION, new HashMap<String, String>());
+			resultstring = getRequest(C.URL_API_LIST, new HashMap<String, String>());
 			return super.doInBackground(params);
 		}
 

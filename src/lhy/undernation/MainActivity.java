@@ -5,21 +5,24 @@ import java.util.Locale;
 
 import lhy.undernation.common.Pref;
 import lhy.undernation.data.DataCategory1;
+import lhy.undernation.data.DataCategory2;
 import lhy.undernation.data.Description;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import arcanelux.library.activity.AdlibrActionBarActivity;
@@ -28,6 +31,8 @@ public class MainActivity extends AdlibrActionBarActivity {
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
+	
+	
 
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
@@ -35,6 +40,9 @@ public class MainActivity extends AdlibrActionBarActivity {
 	
 	private Description mDescription;
 	private ArrayList<DataCategory1> mDataCategory1List;
+	private CategoryAdapter mCategoryAdapter;
+	private Category2ClickListener mCategory2ClickListener;
+	private View viewSelectedCategory2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,20 +51,26 @@ public class MainActivity extends AdlibrActionBarActivity {
 
 		// LoadingActivity에서 받아온 Description 세팅. InitializeTask에서 유효성 검사하므로 이쪽에서는 검사하지 않는다
 		mDescription = new Description(Pref.getDescription(mContext));
+		mDataCategory1List = mDescription.getDataCategory1List();
 		
+		// Listener 설정
+		mCategory2ClickListener = new Category2ClickListener();
 		
 		mTitle = mDrawerTitle = getTitle();
 		mPlanetTitles = getResources().getStringArray(R.array.planets_array);
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
+		
+		
 		// set a custom shadow that overlays the main content when the drawer opens
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 		// set up the drawer's list view with items and click listener
-		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-				R.layout.drawer_list_item, mPlanetTitles));
-		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+		mDrawerList = (ListView) findViewById(R.id.left_drawer);
+		mCategoryAdapter = new CategoryAdapter(mContext, R.layout.drawer_item, R.layout.drawer_item2, mDataCategory1List, mCategory2ClickListener);
+		mDrawerList.setAdapter(mCategoryAdapter);
+//		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+//				R.layout.drawer_list_item, mPlanetTitles));
+//		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		mActionBar.setHomeButtonEnabled(true);
@@ -79,12 +93,40 @@ public class MainActivity extends AdlibrActionBarActivity {
 				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 			}
 		};
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
+//		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		if (savedInstanceState == null) {
 			selectItem(0);
 		}
 	}
+	
+	
+	class Category2ClickListener implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			// 이전에 선택되어있던 Category2 View를 선택해제 한 후, 클릭된 뷰를 선택으로 변환. viewSelectedCategory2에 이벤트 전달되어 온 View 할당
+			if(viewSelectedCategory2 != null) setSelected(viewSelectedCategory2, false);
+			setSelected(v, true);
+			viewSelectedCategory2 = v;
+			DataCategory2 curCategory2 = (DataCategory2) v.getTag();
+			Log.d(TAG, curCategory2.getTitle());
+		}
+	}
+	
+	/**
+	 * Category2아이템 선택시 선택/비선택 표시해줄 함수
+	 */
+	private void setSelected(View view, boolean isSelected){
+		if(isSelected){
+			view.setBackgroundColor(Color.BLUE);
+		} else{
+			view.setBackgroundColor(Color.TRANSPARENT);
+		}
+	}
+	
+	
+	
+	
 
 	/* The click listner for ListView in the navigation drawer */
 	private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -96,9 +138,9 @@ public class MainActivity extends AdlibrActionBarActivity {
 
 	private void selectItem(int position) {
 		// update the main content by replacing fragments
-		//        Fragment fragment = new PlanetFragment();
+		        Fragment fragment = new PlanetFragment();
 //		Fragment fragment = new ComicListFragment("Title" + position);
-		Fragment fragment = new ComicListFragment();
+//		Fragment fragment = new ComicListFragment();
 		Bundle args = new Bundle();
 		args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
 		fragment.setArguments(args);

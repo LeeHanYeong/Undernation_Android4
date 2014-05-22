@@ -70,7 +70,7 @@ public class MainActivity extends AdlibrActionBarActivity {
 		mDrawerList.setAdapter(mCategoryAdapter);
 //		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
 //				R.layout.drawer_list_item, mPlanetTitles));
-//		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		mActionBar.setHomeButtonEnabled(true);
@@ -100,7 +100,9 @@ public class MainActivity extends AdlibrActionBarActivity {
 		}
 	}
 	
-	
+	/**
+	 * Category2 아이템 클릭 리스너
+	 */
 	class Category2ClickListener implements OnClickListener {
 		@Override
 		public void onClick(View v) {
@@ -110,6 +112,11 @@ public class MainActivity extends AdlibrActionBarActivity {
 			viewSelectedCategory2 = v;
 			DataCategory2 curCategory2 = (DataCategory2) v.getTag();
 			Log.d(TAG, curCategory2.getTitle());
+			
+			ComicListFragment fragment = new ComicListFragment(curCategory2.getTitle(), curCategory2.getPostList());
+			FragmentManager fragmentManager = getSupportFragmentManager();
+			fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+			mDrawerLayout.closeDrawer(mDrawerList);
 		}
 	}
 	

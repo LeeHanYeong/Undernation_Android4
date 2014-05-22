@@ -42,9 +42,10 @@ public class ComicListFragment extends Fragment implements OnItemClickListener{
 		super();
 	}
 
-	public ComicListFragment(String title) {
+	public ComicListFragment(String title, ArrayList<DataPost> dataPostList) {
 		super();
 		this.fragmentTitle = title;
+		this.mDataPostList = dataPostList;
 	}
 
 	@Override
@@ -73,8 +74,8 @@ public class ComicListFragment extends Fragment implements OnItemClickListener{
 		aq.id(ivHeaderCover).image("http://thumb.comic.naver.net/webtoon/186811/thumbnail/title_thumbnail_20130109160631_t125x101.jpg", options);
 
 		// ListAdapter
-//		mListAdapter = new ListAdapter(mContext, R.layout.comiclist_listview_item, mDataPostList);
-//		lvList.setAdapter(mListAdapter);
+		mListAdapter = new ListAdapter(mContext, R.layout.comiclist_listview_item, mDataPostList);
+		lvList.setAdapter(mListAdapter);
 
 
 

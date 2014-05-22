@@ -24,6 +24,7 @@ public class CategoryAdapter extends BaseArrayAdapter<DataCategory1>{
 		layoutResource2 = resource2;
 		mCategory2ClickListener = category2ClickListener;
 	}
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		DataCategory1 curCategory1 = mDataCategory1List.get(position);
@@ -41,6 +42,8 @@ public class CategoryAdapter extends BaseArrayAdapter<DataCategory1>{
 		if(curCategory1.hasCategory2()){
 			curView.setClickable(false);
 			curView.setFocusable(false);
+			llItemList.setClickable(false);
+			llItemList.setFocusable(false);
 			
 			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			ArrayList<DataCategory2> category2List = curCategory1.getCategory2List();

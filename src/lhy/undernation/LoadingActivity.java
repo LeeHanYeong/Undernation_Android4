@@ -18,9 +18,13 @@ public class LoadingActivity extends AdlibrLoadingActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mActionBar.hide();
+		showAd = false;
+		D = true;
 		setContentView(R.layout.loading);
 		
-		new UndernationVersionCheckTask(mContext, "버전 체크 중...", true).execute();
+		initAds();
+		new UndernationVersionCheckTask(mContext, "버전 체크 중...", false).execute();
 	}
 	
 	class UndernationVersionCheckTask extends VersionCheckTask{
@@ -39,7 +43,7 @@ public class LoadingActivity extends AdlibrLoadingActivity {
 		@Override
 		protected void onPostExecute(Integer result) {
 			super.onPostExecute(result);
-			new UndernationInitializeTask(mContext, "초기화 중...", true).execute();
+			new UndernationInitializeTask(mContext, "초기화 중...", false).execute();
 		}
 	}
 	

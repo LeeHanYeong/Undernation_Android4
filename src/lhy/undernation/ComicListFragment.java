@@ -2,11 +2,13 @@ package lhy.undernation;
 
 import java.util.ArrayList;
 
-import lhy.undernation.data.DataCategory1;
+import lhy.undernation.common.C;
 import lhy.undernation.data.DataPost;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +24,14 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.ImageOptions;
 
 public class ComicListFragment extends Fragment implements OnItemClickListener{
+	private final String TAG = this.getClass().getSimpleName();
 	public final String ARG_COMICLIST_NUMBER = "ComicList Number";
 	private Context mContext;
 	private AQuery aq;
 
 	private String fragmentTitle;
+	private String description;
+	private String mUrlLogo;
 	private View viewListHeader, viewListFooter;
 	private ListView lvList;
 	private ListAdapter mListAdapter;
@@ -42,9 +47,11 @@ public class ComicListFragment extends Fragment implements OnItemClickListener{
 		super();
 	}
 
-	public ComicListFragment(String title, ArrayList<DataPost> dataPostList) {
+	public ComicListFragment(String title, String description, String urlLogo, ArrayList<DataPost> dataPostList) {
 		super();
 		this.fragmentTitle = title;
+		this.description = description;
+		this.mUrlLogo = urlLogo;
 		this.mDataPostList = dataPostList;
 	}
 
@@ -66,19 +73,16 @@ public class ComicListFragment extends Fragment implements OnItemClickListener{
 		tvHeaderTitle = (TextView) viewListHeader.findViewById(R.id.tvComicListHeaderTitle);
 		tvHeaderDescription = (TextView) viewListHeader.findViewById(R.id.tvComicListHeaderDescription);
 		tvHeaderTitle.setText(fragmentTitle);
-		tvHeaderDescription.setText("Description");
+		tvHeaderDescription.setText(description);
 		ivHeaderCover = (ImageView) viewListHeader.findViewById(R.id.ivComicListHeaderCover);
 		pbHeaderCover = (ProgressBar) viewListHeader.findViewById(R.id.pbComicListHeaderCover);
 		ImageOptions options = new ImageOptions();
 		options.round = (int)(15 * 2);
-		aq.id(ivHeaderCover).image("http://thumb.comic.naver.net/webtoon/186811/thumbnail/title_thumbnail_20130109160631_t125x101.jpg", options);
+		aq.id(ivHeaderCover).image(mUrlLogo, options);
 
 		// ListAdapter
 		mListAdapter = new ListAdapter(mContext, R.layout.comiclist_listview_item, mDataPostList);
 		lvList.setAdapter(mListAdapter);
-
-
-
 		return v;
 	}
 
@@ -101,7 +105,6 @@ public class ComicListFragment extends Fragment implements OnItemClickListener{
 			String created = curPost.getCreatedString();
 			String category = curPost.getCategory2Title();
 
-			//			ImageView ivThumbnail = (ImageView) curView.findViewById(R.id.ivListItemThumbnail);
 			TextView tvTitle = (TextView) curView.findViewById(R.id.tvComicListItemTitle);
 			TextView tvDate = (TextView) curView.findViewById(R.id.tvComicListItemDate);
 			TextView tvCategory = (TextView) curView.findViewById(R.id.tvComicListItemCategory);
@@ -109,16 +112,24 @@ public class ComicListFragment extends Fragment implements OnItemClickListener{
 			tvTitle.setText(title);
 			tvDate.setText(created);
 			tvCategory.setText(category);
-			//			aq.id(ivThumbnail).image
 
 			return curView;
 		}
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		// TODO Auto-generated method stub
-
+	public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+		if(position !=0 && position != mDataPostList.size()){
+			position = position - 1;
+			DataPost curPost = mDataPostList.get(position);
+			String url = C.URL_COMIC_VIEW + curPost.getId();
+			Log.d(TAG, url);
+			Intent intent = new Intent(mContext, ComicDetailActivity.class);
+			intent.putExtra("url", url);
+			intent.putExtra("title", curPost.getTitle());
+			startActivity(intent);	
+		}
+		
 	}
 
 }

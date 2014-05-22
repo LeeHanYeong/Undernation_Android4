@@ -22,6 +22,27 @@ public class DataCategory2 extends BaseData {
 	public String getTitle(){
 		return getString("category2_title");
 	}
+	
+	private String getCategory1Description(){
+		return getString("category1_description");
+	}
+	
+	public String getDescription(){
+		String category2Description = getString("category2_description");
+		if(category2Description.equals("") || category2Description == null){
+			return getCategory1Description();
+		} else{
+			return category2Description;
+		}
+	}
+	
+	public DataImage getCategory1LogoImage(){
+		return new DataImage(getJsonObject("category1_logo"));
+	}
+	
+	public DataImage getCategory2LogoImage(){
+		return new DataImage(getJsonObject("category2_logo"));
+	}
 
 	public ArrayList<DataPost> getPostList(){
 		ArrayList<DataPost> dataPostList = new ArrayList<DataPost>();

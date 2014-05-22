@@ -2,6 +2,7 @@ package lhy.undernation.data;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 
 import lhy.undernation.common.C;
 
@@ -36,6 +37,24 @@ public class Description extends BaseData {
 			e.printStackTrace();
 		}
 		return dataCategory1List;
+	}
+	
+	public ArrayList<DataPost> getPostList(){
+		ArrayList<DataPost> dataPostList = new ArrayList<DataPost>();
+		
+		ArrayList<DataCategory1> dataCategory1List = getDataCategory1List();
+		for(int i=0; i<dataCategory1List.size(); i++){
+			DataCategory1 curDataCategory1 = dataCategory1List.get(i);
+			ArrayList<DataCategory2> curDataCategory2List = curDataCategory1.getCategory2List();
+			for(int j=0; j<curDataCategory2List.size(); j++){
+				DataCategory2 curDataCategory2 = curDataCategory2List.get(j);
+				ArrayList<DataPost> curDataPostList = curDataCategory2.getPostList();
+				
+				dataPostList.addAll(curDataPostList);
+			}
+		}
+		Collections.sort(dataPostList, new C.IdDescCompare());
+		return dataPostList;
 	}
 	
 	public String getCreatedString(){

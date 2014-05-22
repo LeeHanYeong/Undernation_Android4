@@ -3,10 +3,12 @@ package lhy.undernation;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import lhy.undernation.common.C;
 import lhy.undernation.common.Pref;
 import lhy.undernation.data.DataCategory1;
 import lhy.undernation.data.DataCategory2;
 import lhy.undernation.data.Description;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -25,18 +27,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 import arcanelux.library.activity.AdlibrActionBarActivity;
 
 public class MainActivity extends AdlibrActionBarActivity {
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
+	private View viewDrawerHeader;
 	private ActionBarDrawerToggle mDrawerToggle;
-	
-	
-
-	private CharSequence mDrawerTitle;
-	private CharSequence mTitle;
-	private String[] mPlanetTitles;
 	
 	private Description mDescription;
 	private ArrayList<DataCategory1> mDataCategory1List;
@@ -56,23 +54,24 @@ public class MainActivity extends AdlibrActionBarActivity {
 		// Listener 설정
 		mCategory2ClickListener = new Category2ClickListener();
 		
-		mTitle = mDrawerTitle = getTitle();
-		mPlanetTitles = getResources().getStringArray(R.array.planets_array);
-
+		// NavigationDrawer 설정
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		
-		
 		// set a custom shadow that overlays the main content when the drawer opens
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 		// set up the drawer's list view with items and click listener
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
+		
+		// NavigationDrawer의 ListView에 Header View추가
+		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		viewDrawerHeader = inflater.inflate(R.layout.drawer_header, null);
+		mDrawerList.addHeaderView(viewDrawerHeader);
+		
+		// NavigationDrawer의 ListView에 Adapter 연결, 클릭리스너 할당
 		mCategoryAdapter = new CategoryAdapter(mContext, R.layout.drawer_item, R.layout.drawer_item2, mDataCategory1List, mCategory2ClickListener);
 		mDrawerList.setAdapter(mCategoryAdapter);
-//		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-//				R.layout.drawer_list_item, mPlanetTitles));
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-		// enable ActionBar app icon to behave as action to toggle nav drawer
+		// ActionBar AppIcon으로 NavigationDrawer 작동하도록 설정
 		mActionBar.setHomeButtonEnabled(true);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -84,16 +83,14 @@ public class MainActivity extends AdlibrActionBarActivity {
 				R.string.drawer_close  /* "close drawer" description for accessibility */
 				) {
 			public void onDrawerClosed(View view) {
-				mActionBar.setTitle(mTitle);
 				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 			}
 
 			public void onDrawerOpened(View drawerView) {
-				mActionBar.setTitle(mDrawerTitle);
 				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 			}
 		};
-//		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		if (savedInstanceState == null) {
 			selectItem(0);
@@ -113,7 +110,13 @@ public class MainActivity extends AdlibrActionBarActivity {
 			DataCategory2 curCategory2 = (DataCategory2) v.getTag();
 			Log.d(TAG, curCategory2.getTitle());
 			
-			ComicListFragment fragment = new ComicListFragment(curCategory2.getTitle(), curCategory2.getPostList());
+			String urlLogo = "";
+			if(curCategory2.getCategory2LogoImage().hasImageFile()){
+				urlLogo = curCategory2.getCategory2LogoImage().getUrl();
+			} else{
+				urlLogo = curCategory2.getCategory1LogoImage().getUrl();
+			}
+			ComicListFragment fragment = new ComicListFragment(curCategory2.getTitle(), curCategory2.getDescription(), C.URL_BASE + urlLogo, curCategory2.getPostList());
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 			mDrawerLayout.closeDrawer(mDrawerList);
@@ -131,40 +134,37 @@ public class MainActivity extends AdlibrActionBarActivity {
 		}
 	}
 	
-	
-	
-	
-
 	/* The click listner for ListView in the navigation drawer */
 	private class DrawerItemClickListener implements ListView.OnItemClickListener {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			// position=0 이면 업데이트순 보기(ListView Header)이므로, position에서 -1하며 -1일경우 따로 동작
 			selectItem(position);
 		}
 	}
 
+	/** 
+	 * NavigationDrawer의 아이템 클릭시 발생하는 이벤트
+	 * 해당 Position의 Fragment를 만들어주며, 클릭 시 Drawer를 닫아줌
+	 */
 	private void selectItem(int position) {
-		// update the main content by replacing fragments
-		        Fragment fragment = new PlanetFragment();
-//		Fragment fragment = new ComicListFragment("Title" + position);
-//		Fragment fragment = new ComicListFragment();
-		Bundle args = new Bundle();
-		args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
-		fragment.setArguments(args);
-
+		ComicListFragment fragment = null;
+		if(position == 0){
+			DataCategory1 curCategory1 = mDescription.getDataCategory1List().get(0);
+			fragment = new ComicListFragment("업데이트 순으로 보기", curCategory1.getDescription(), C.URL_BASE + curCategory1.getCategory1LogoImage().getUrl(), mDescription.getPostList());
+		} else{
+			position = position - 1;
+			DataCategory1 curCategory1 = mDataCategory1List.get(position);
+			Log.d(TAG, curCategory1.getTitle());
+			
+			fragment = new ComicListFragment(curCategory1.getTitle(), curCategory1.getDescription(), C.URL_BASE + curCategory1.getCategory1LogoImage().getUrl(), curCategory1.getPostList());				
+		}
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
-		// update selected item and title, then close the drawer
+		// update selected item and title, then close the drawer			
 		mDrawerList.setItemChecked(position, true);
-		//        setTitle(mPlanetTitles[position]);
 		mDrawerLayout.closeDrawer(mDrawerList);
-	}
-
-	@Override
-	public void setTitle(CharSequence title) {
-		mTitle = title;
-		mActionBar.setTitle(mTitle);
 	}
 
 	/* Called whenever we call invalidateOptionsMenu() */
@@ -193,9 +193,7 @@ public class MainActivity extends AdlibrActionBarActivity {
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
 
-	/**
-	 * Actionbar Home/Up 버튼으로 NavigationDrawer 작동시키려면 이 함수 필요
-	 */
+	/** Actionbar Home/Up 버튼으로 NavigationDrawer 작동시키려면 이 함수 필요 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// The action bar home/up action should open or close the drawer.
@@ -221,27 +219,5 @@ public class MainActivity extends AdlibrActionBarActivity {
 		//            return super.onOptionsItemSelected(item);
 		//        }
 		return super.onOptionsItemSelected(item);
-	}
-
-	public static class PlanetFragment extends Fragment {
-		public static final String ARG_PLANET_NUMBER = "planet_number";
-
-		public PlanetFragment() {
-			// Empty constructor required for fragment subclasses
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_planet, container, false);
-			int i = getArguments().getInt(ARG_PLANET_NUMBER);
-			String planet = getResources().getStringArray(R.array.planets_array)[i];
-
-			int imageId = getResources().getIdentifier(planet.toLowerCase(Locale.getDefault()),
-					"drawable", getActivity().getPackageName());
-			((ImageView) rootView.findViewById(R.id.image)).setImageResource(imageId);
-			getActivity().setTitle(planet);
-			return rootView;
-		}
 	}
 }

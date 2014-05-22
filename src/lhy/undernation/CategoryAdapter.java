@@ -40,11 +40,6 @@ public class CategoryAdapter extends BaseArrayAdapter<DataCategory1>{
 		String categoryTitle = curCategory1.getTitle();
 		tvItemTitle.setText(categoryTitle);
 		if(curCategory1.hasCategory2()){
-			curView.setClickable(false);
-			curView.setFocusable(false);
-			llItemList.setClickable(false);
-			llItemList.setFocusable(false);
-			
 			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			ArrayList<DataCategory2> category2List = curCategory1.getCategory2List();
 			for(int i=0; i<category2List.size(); i++){

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="lhy.undernation"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="20"
+    android:versionName="4.0" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -36,6 +36,10 @@
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".ComicDetailActivity" />
+        <activity android:name="arcanelux.library.activity.BaseLoadingActivity"/>
+        <activity android:name="arcanelux.library.activity.BaseActionBarActivity"/>
+        <activity android:name="arcanelux.library.activity.AdlibrActionBarActivity"/>
+        <activity android:name="arcanelux.library.activity.AdlibrLoadingActivity"/>
         
         <!-- Adlibr -->
         <activity

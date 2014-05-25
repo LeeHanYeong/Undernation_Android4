@@ -31,7 +31,7 @@ public class CategoryAdapter extends BaseArrayAdapter<DataCategory1>{
 		View curView = null;
 		if(curView == null){
 			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			curView = inflateWithCustomFont(inflater, layoutResource);
+			curView = inflateWithCustomFont(inflater, parent, layoutResource);
 		}
 
 		TextView tvItemTitle = (TextView) curView.findViewById(R.id.tvDrawerItem);

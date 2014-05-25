@@ -1,7 +1,6 @@
 package lhy.undernation;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import lhy.undernation.common.C;
 import lhy.undernation.common.Pref;
@@ -13,7 +12,6 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,11 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 import arcanelux.library.activity.AdlibrActionBarActivity;
 
 public class MainActivity extends AdlibrActionBarActivity {
